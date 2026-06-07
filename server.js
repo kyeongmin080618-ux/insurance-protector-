@@ -192,6 +192,22 @@ ${fileList}
 <start_of_turn>model`;
 }
 
+function parseJsonSafe(text) {
+  if (!text) return null;
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function summarizeUpstreamBody(text) {
+  const compact = text.replace(/\s+/g, ' ').trim();
+  if (!compact) return '응답 본문이 비어 있습니다.';
+  return compact.length > 240 ? `${compact.slice(0, 240)}...` : compact;
+}
+
 function normalizeModelResponse(data) {
   const text = data?.candidates?.[0]?.content?.parts
     ?.map((part) => part.text)
@@ -233,30 +249,40 @@ async function analyze(req, res) {
   const parts = [
     { text: prompt },
     ...files.map((file) => ({
-      inlineData: {
-        mimeType: file.mimetype,
+      inline_data: {
+        mime_type: file.mimetype,
         data: file.buffer.toString('base64'),
       },
     })),
   ];
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent?key=${encodeURIComponent(apiKey)}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts }],
-        generationConfig: {
-          temperature: 0.2,
-          topP: 0.9,
-          maxOutputTokens: 4096,
-        },
-      }),
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
     },
-  );
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts }],
+      generationConfig: {
+        temperature: 0.2,
+        topP: 0.9,
+        maxOutputTokens: 4096,
+      },
+    }),
+  });
 
-  const data = await response.json();
+  const responseText = await response.text();
+  const data = parseJsonSafe(responseText);
+
+  if (!data) {
+    sendJson(res, 502, {
+      error: `Google API가 JSON이 아닌 응답을 반환했습니다. 모델 ID(${MODEL}) 또는 API 엔드포인트를 확인해 주세요. 상태: ${response.status} ${response.statusText}. 응답: ${summarizeUpstreamBody(responseText)}`,
+    });
+    return;
+  }
+
   if (!response.ok) {
     sendJson(res, response.status, { error: data?.error?.message || 'Google Generative Language API 호출에 실패했습니다.' });
     return;
