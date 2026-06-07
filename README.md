@@ -12,8 +12,7 @@
 ## 실행 방법
 
 ```bash
-cp .env.example .env
-# .env 파일의 GOOGLE_API_KEY 값을 실제 Google API 키로 교체하세요.
+GOOGLE_API_KEY=your-google-api-key npm run setup:env
 npm start
 ```
 
@@ -29,6 +28,6 @@ npm start
 
 ## 보안 및 책임 안내
 
-- 실제 API 키는 `.env`에만 저장하고 Git에 커밋하지 마세요.
+- 실제 API 키는 `.env`에만 저장하고 Git에 커밋하지 마세요. `npm run setup:env`는 `.env` 파일을 로컬에만 생성하며, `.gitignore`에 의해 커밋 대상에서 제외됩니다.
 - 업로드되는 문서에는 민감한 개인정보가 포함될 수 있으므로 배포 전 저장 정책, 접근 통제, 전송 구간 암호화, 이용자 동의 절차를 마련해야 합니다.
 - AI 분석 결과는 참고용이며 실제 보험금 지급 여부와 금액은 보험회사 심사 결과에 따라 달라질 수 있습니다.
