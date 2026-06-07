@@ -32,7 +32,20 @@ globalThis.fetch = async (url, options) => {
   };
 
   return new Response(
-    JSON.stringify({ candidates: [{ content: { parts: [{ text: '분석 결과' }] } }] }),
+    JSON.stringify({
+      candidates: [{
+        content: {
+          parts: [{
+            text: [
+              'AI Insurance Claim Analyst.',
+              'Analyze expected insurance payouts for uploaded documents.',
+              '최종 답변',
+              '한 줄 결론: 예상 보험금은 확인 필요입니다.'
+            ].join('\n')
+          }]
+        }
+      }]
+    }),
     { status: 200 }
   );
 };
@@ -63,6 +76,15 @@ if (previousApiKey === undefined) {
 
 if (response.statusCode !== 200) {
   throw new Error(`Expected status 200, received ${response.statusCode}: ${response.body}`);
+}
+
+const responseBody = JSON.parse(response.body);
+if (!responseBody.result.startsWith('최종 답변')) {
+  throw new Error('Model response did not keep only the final-answer section.');
+}
+
+if (responseBody.result.includes('AI Insurance Claim Analyst') || responseBody.result.includes('Analyze expected insurance payouts')) {
+  throw new Error('Internal prompt leakage was not removed from the model response.');
 }
 
 if (!capturedRequest?.url?.includes(':generateContent')) {
