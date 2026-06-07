@@ -1,0 +1,13 @@
+{
+  "name": "insurance-protector",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI insurance claim payout estimator for uploaded policies and claim documents.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node --check server.js && node --check lib/insurance-ai.js && node --check api/analyze.js && node --check api/health.js && node --check public/app.js && node --check scripts/write-env.mjs && node -e \"await import('./lib/insurance-ai.js'); await import('./api/analyze.js'); await import('./api/health.js')\"",
+    "setup:env": "node scripts/write-env.mjs"
+  }
+}
