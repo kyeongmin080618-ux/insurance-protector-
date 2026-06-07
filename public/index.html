@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>보험금 AI 예상 계산기</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="eyebrow">Gemma 기반 보험금 예상 분석</div>
+        <h1>보험증권과 청구 서류를 올리면 AI가 예상 보험금을 정리해 드립니다.</h1>
+        <p>
+          보험증권, 약관, 진단서, 영수증, 사고확인서 등을 업로드하면 보장 항목,
+          감액·면책 리스크, 추가 제출 서류까지 한 번에 점검합니다.
+        </p>
+      </section>
+
+      <section class="card notice" aria-label="중요 안내">
+        <strong>중요:</strong> 이 서비스는 참고용 예상 분석 도구입니다. 실제 지급 여부와 금액은
+        보험회사 심사, 약관, 제출 서류, 사고 경위에 따라 달라질 수 있습니다.
+      </section>
+
+      <section class="grid">
+        <form id="claim-form" class="card form-card">
+          <label class="field">
+            <span>궁금한 점</span>
+            <input
+              name="customerQuestion"
+              type="text"
+              placeholder="예: 허리 디스크 입원 치료 보험금을 얼마나 받을 수 있을까요?"
+            />
+          </label>
+
+          <label class="field">
+            <span>추가 청구 상황</span>
+            <textarea
+              name="claimContext"
+              rows="5"
+              placeholder="사고/진단 날짜, 치료 기간, 이미 받은 보험금, 본인부담금 등을 적어 주세요."
+            ></textarea>
+          </label>
+
+          <label class="upload-zone" for="documents">
+            <input id="documents" name="documents" type="file" multiple accept="application/pdf,image/*" />
+            <span class="upload-icon">📄</span>
+            <strong>서류 업로드</strong>
+            <small>PDF, JPG, PNG, WEBP, HEIC / 최대 8개 / 파일당 12MB</small>
+          </label>
+
+          <ul id="file-list" class="file-list" aria-live="polite"></ul>
+
+          <button id="submit-button" type="submit">AI로 보험금 예상하기</button>
+        </form>
+
+        <section class="card result-card" aria-live="polite">
+          <div class="result-header">
+            <div>
+              <span class="eyebrow">분석 결과</span>
+              <h2>예상 보험금 리포트</h2>
+            </div>
+            <span id="model-badge" class="badge">gemma-4-31b-it</span>
+          </div>
+          <div id="result" class="result empty">
+            서류를 업로드하고 분석을 시작하면 여기에 결과가 표시됩니다.
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
