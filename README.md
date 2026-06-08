@@ -51,6 +51,18 @@ npm start
 4. `GEMMA_MODEL`이 Google Generative Language API에서 사용 가능한 모델 ID인지 확인합니다.
 
 
+### Vercel 빌드에서 “Expected comma or closing brace but found parenthesis”가 반복될 때
+
+배포 로그의 `Cloning ... (Branch: ..., Commit: ...)` 줄을 먼저 확인하세요. 같은 커밋 해시(예: `b84efa6`)가 계속 보이면 Vercel이 최신 수정본이 아니라 예전 커밋을 다시 빌드하고 있는 상태입니다. 해당 예전 커밋에는 `lib/insurance-ai.js`의 Gemini 요청 본문 안에 `thinkingConfig` 중괄호가 덜 닫힌 구문 오류가 있어서, 로그가 항상 `body: JSON.stringify({ ... })` 주변을 가리킵니다.
+
+현재 수정본에서는 Gemini 요청 payload를 먼저 객체로 만든 뒤 `JSON.stringify(requestPayload)`로 직렬화하므로, 예전 로그의 `body: JSON.stringify({` 형태가 더 이상 남아 있지 않습니다. 아래 순서로 확인하세요.
+
+1. GitHub에서 Vercel이 연결된 브랜치가 최신 커밋까지 올라갔는지 확인합니다.
+2. Vercel Deployments 화면에서 실패한 배포의 Commit 해시가 GitHub 브랜치의 최신 Commit 해시와 같은지 비교합니다.
+3. 해시가 다르면 GitHub에 최신 커밋을 push/merge한 뒤 Vercel에서 새 배포를 다시 실행합니다.
+4. 로컬에서는 `npm run check`로 `lib/insurance-ai.js` 구문 검사와 Gemini payload 검증을 함께 실행할 수 있습니다.
+
+
 ### 그래도 `GOOGLE_API_KEY` 오류가 뜨면
 
 - 파일 이름이 정확히 `.env` 또는 `.env.local`인지 확인하세요. `env`, `emv`, `.emv`는 읽지 않습니다.
