@@ -1,11 +1,11 @@
 # Insurance Protector
 
-보험증권, 약관, 진단서, 영수증 등 보험금 청구 서류를 업로드하면 Google AI Studio의 Gemma 모델로 예상 보험금과 리스크를 정리하는 웹 애플리케이션입니다.
+보험증권, 약관, 진단서, 영수증 등 보험금 청구 서류를 업로드하면 Google AI Studio의 Gemini 모델로 예상 보험금과 리스크를 정리하는 웹 애플리케이션입니다.
 
 ## 주요 기능
 
 - PDF 및 이미지 기반 보험 청구 서류 업로드
-- `gemma-4-31b-it` 기본 모델을 사용한 보험금 예상 분석
+- `gemini-2.5-flash-lite` 기본 모델을 사용한 보험금 예상 분석
 - 보장 항목별 산정표, 감액·면책 리스크, 추가 제출 서류 안내
 - API 키를 브라우저에 노출하지 않는 Node 프록시 서버
 
@@ -27,7 +27,8 @@ npm start
 | 변수 | 기본값 | 설명 |
 | --- | --- | --- |
 | `GOOGLE_API_KEY` | 없음 | Google AI Studio / Gemini API 키 |
-| `GEMMA_MODEL` | `gemma-4-31b-it` | 호출할 모델 ID |
+| `GOOGLE_MODEL` | `gemini-2.5-flash-lite` | 호출할 Google Generative Language API 모델 ID |
+| `GEMMA_MODEL` | 없음 | 이전 설정과의 호환용 모델 ID. `GOOGLE_MODEL`이 있으면 무시됩니다. |
 | `PORT` | `3000` | 웹 서버 포트 |
 
 ## 보안 및 책임 안내
@@ -48,7 +49,7 @@ npm start
 1. 로컬에서는 `npm start`로 Node 서버를 실행한 뒤 `http://localhost:3000`에서 접속했는지 확인합니다. 정적 파일만 배포하면 `/api/analyze`가 없어서 HTML 오류 페이지가 반환될 수 있습니다.
 2. Vercel에서는 `/api/health`가 JSON을 반환하는지 확인합니다. `The deployment is currently unavailable SERVICE_UNAVAILABLE`가 보이면 배포 로그를 확인하고 재배포하세요.
 3. 로컬 `.env` 또는 Vercel Environment Variables의 `GOOGLE_API_KEY`가 올바른지 확인합니다.
-4. `GEMMA_MODEL`이 Google Generative Language API에서 사용 가능한 모델 ID인지 확인합니다.
+4. `GOOGLE_MODEL` 또는 `GEMMA_MODEL`이 Google Generative Language API에서 사용 가능한 모델 ID인지 확인합니다. 기본값은 `gemini-2.5-flash-lite`입니다.
 
 
 ### 그래도 `GOOGLE_API_KEY` 오류가 뜨면
